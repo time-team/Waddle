@@ -131,8 +131,8 @@ class GPXParser extends Parser
 
             // Speed = Distance / Time
             // Each track point should be recorded 1 second after the last, but let's just confirm that
-            $time = $point->getTime('U.u')
-            $prevTime = $previousTrackPoint->getTime('U.u')
+            $time = $point->getTime('U.u');
+            $prevTime = $previousTrackPoint->getTime('U.u');
             if($time and $prevTime) {
                 $timeDiff = $time - $prevTime;
 
