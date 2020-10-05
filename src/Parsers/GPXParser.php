@@ -35,7 +35,9 @@ class GPXParser extends Parser
 
         // Parse the first activity
         $activityNode = $data->trk;
-        $activity->setStartTime(new DateTime((string)$activityNode->trkseg[0]->trkpt[0]->time));
+        if($time = $activityNode->trkseg[0]->trkpt[0]->time) {
+            $activity->setStartTime(new DateTime((string)$time));
+        }
         $activity->setType((string)$activityNode->name[0]);
 
         // Now parse the trksegs (Track Segments, I assume)
@@ -104,9 +106,13 @@ class GPXParser extends Parser
     protected function parseTrackPoint($trackPointNode, $previousTrackPoint)
     {
         $point = new TrackPoint();
-        $point->setTime(new DateTime((string)$trackPointNode->time));
+        if($time = $trackPointNode->time) {
+            $point->setTime(new DateTime((string)$time));
+        }
         $point->setPosition(['lat' => (float)$trackPointNode['lat'], 'lon' => (float)$trackPointNode['lon']]);
-        $point->setAltitude((float)$trackPointNode->ele);
+        if($ele = $trackPointNode->ele) {
+            $point->setAltitude((float)$ele);
+        }
 
         // GPX files don't store the distance travelled, that will have to be calculated from lat/lon
         $distance = 0;
