@@ -35,8 +35,8 @@ class GPXParser extends Parser
 
         // Parse the first activity
         $activityNode = $data->trk;
-        if($time = $activityNode->trkseg[0]->trkpt[0]->time) {
-            $activity->setStartTime(new DateTime((string)$time));
+        if(isset($activityNode->trkseg[0]->trkpt[0]->time)) {
+            $activity->setStartTime(new DateTime((string)$activityNode->trkseg[0]->trkpt[0]->time));
         }
         $activity->setType((string)$activityNode->name[0]);
 
@@ -106,12 +106,12 @@ class GPXParser extends Parser
     protected function parseTrackPoint($trackPointNode, $previousTrackPoint)
     {
         $point = new TrackPoint();
-        if($time = $trackPointNode->time) {
-            $point->setTime(new DateTime((string)$time));
+        if(isset($trackPointNode->time)) {
+            $point->setTime(new DateTime((string)$trackPointNode->time));
         }
         $point->setPosition(['lat' => (float)$trackPointNode['lat'], 'lon' => (float)$trackPointNode['lon']]);
-        if($ele = $trackPointNode->ele) {
-            $point->setAltitude((float)$ele);
+        if(isset($trackPointNode->ele)) {
+            $point->setAltitude((float)$trackPointNode->ele);
         }
 
         // GPX files don't store the distance travelled, that will have to be calculated from lat/lon
@@ -131,10 +131,14 @@ class GPXParser extends Parser
 
             // Speed = Distance / Time
             // Each track point should be recorded 1 second after the last, but let's just confirm that
-            $timeDiff = $point->getTime('U') - $previousTrackPoint->getTime('U');
+            $time = $point->getTime('U.u')
+            $prevTime = $previousTrackPoint->getTime('U.u')
+            if($time and $prevTime) {
+                $timeDiff = $time - $prevTime;
 
-            if ($timeDiff != 0) {
-                $speed = ($distanceTravelled / $timeDiff); # Metres per Second
+                if ($timeDiff != 0) {
+                    $speed = ($distanceTravelled / $timeDiff); # Metres per Second
+                }
             }
         }
 
