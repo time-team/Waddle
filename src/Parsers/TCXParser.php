@@ -116,13 +116,19 @@ class TCXParser extends Parser
     protected function parseTrackPoint($trackPointNode)
     {
         $point = new TrackPoint();
-        $point->setTime(new \DateTime((string)$trackPointNode->Time));
+        if(isset($trackPointNode->Time)) {
+            $point->setTime(new \DateTime((string)$trackPointNode->Time));
+        }
         $point->setPosition([
             'lat' => (float)$trackPointNode->Position->LatitudeDegrees,
             'lon' => (float)$trackPointNode->Position->LongitudeDegrees,
         ]);
-        $point->setAltitude((float)$trackPointNode->AltitudeMeters);
-        $point->setDistance((float)$trackPointNode->DistanceMeters);
+        if(isset($trackPointNode->AltitudeMeters)) {
+            $point->setAltitude((float)$trackPointNode->AltitudeMeters);
+        }
+        if(isset($trackPointNode->DistanceMeters)) {
+            $point->setDistance((float)$trackPointNode->DistanceMeters);
+        }
 
         // If heartrate is present on node, set that.
         if (isset($trackPointNode->HeartRateBpm)) {
