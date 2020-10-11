@@ -144,8 +144,8 @@ class TCXParser extends Parser
 
         // If the speed extension is present on the node, set that.
         if ($this->nameNSActivityExtensionV2) {
-            if (isset($trackPointNode->Extensions->children('x', true)->TPX->children()->Speed)) {
-                $point->setSpeed((float)$trackPointNode->Extensions->children('x', true)->TPX->children()->Speed);
+            if (isset($trackPointNode->Extensions) and $ext_child = $trackPointNode->Extensions->children('x', true) and isset($ext_child->TPX) and $tpx_child = $ext_child->TPX->children() and isset($tpx_child->Speed)) {
+                $point->setSpeed((float)$tpx_child->Speed);
             }
         }
 
